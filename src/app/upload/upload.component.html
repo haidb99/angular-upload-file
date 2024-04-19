@@ -1,0 +1,100 @@
+<div class="container">
+  <div class="row">
+    <div class="col-md-3">
+      <input
+        type="file"
+        #fileInput
+        style="display: none"
+        ng2FileSelect
+        [uploader]="uploader"
+        multiple
+        (onFileSelected)="onFileSelected($event)"
+      />
+      <br />
+
+      <div
+        ng2FileDrop
+        [ngClass]="{ 'another-file-over-class': hasAnotherDropZoneOver }"
+        (fileOver)="fileOverAnother($event)"
+        [uploader]="uploader"
+        (onFileDrop)="onFileSelected($event)"
+        class="well my-drop-zone"
+        (paste)="onPaste($event)"
+      >
+        <div>Kéo thả tệp tại đây</div>
+        <button
+          type="button"
+          class="button button-upload"
+          (click)="fileInput.click()"
+        >
+          Chọn file từ máy tính
+        </button>
+      </div>
+    </div>
+
+    <div
+      class="col-md-9"
+      style="margin-bottom: 40px"
+      *ngIf="uploader.queue.length > 0"
+    >
+      <div>
+        <div>
+          <p>Số lượng files: {{ uploader?.queue?.length }}</p>
+          <button
+            type="button"
+            class="button button-upload"
+            (click)="uploadAll()"
+            [disabled]="!uploader.getNotUploadedItems().length"
+          >
+            <span class="glyphicon glyphicon-upload"></span> Upload all
+          </button>
+          <button
+            type="button"
+            class="button button-remove"
+            (click)="uploader.clearQueue()"
+            [disabled]="!uploader.queue.length"
+          >
+            Remove all
+          </button>
+        </div>
+      </div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="column">STT</th>
+            <th class="column">Tên file</th>
+            <th class="column">Kích thước</th>
+            <th class="column">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of uploader.queue; let i = index">
+            <td class="column">{{ i + 1 }}</td>
+            <td class="column" style="text-align: left">
+              <strong>{{ item?.file?.name }}</strong>
+            </td>
+            <td class="column" *ngIf="uploader.options.isHTML5" nowrap>
+              {{ item?.file?.size / 1024 / 1024 | number : ".2" }} MB
+            </td>
+            <td class="column" nowrap>
+              <button
+                type="button"
+                class="button button-upload"
+                (click)="upload(item)"
+              >
+                upload
+              </button>
+              <button
+                type="button"
+                class="button button-remove"
+                (click)="item.remove()"
+              >
+                Remove
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
